@@ -14,7 +14,7 @@ You can see a working version in this live app: [Dododex Taming Calculator for A
 ## Usage
 Simply add `<InputAccessory>` to the bottom of a view:
 ```javascript
-import KeyboardAccessory from './InputAccessory';
+import InputAccessory from './InputAccessory';
 
 (...)
 
