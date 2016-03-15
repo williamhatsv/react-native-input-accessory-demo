@@ -6,7 +6,10 @@ The "Done" button allows users to dismiss the keyboard, which is not possible on
 
 The Input Accessory could also be used to add a "Next/Previous" button to the keyboard.
 
-You can see a working version in this live app: [Dododex Taming Calculator for Ark: Survival Evolved](https://itunes.apple.com/us/app/dododex-taming-calculator/id1071311292?mt=8)
+You can see a working version in this live app: [Dododex Taming Calculator for Ark: Survival Evolved](https://itunes.apple.com/us/app/dododex-taming-calculator/id1071311292?mt=8):
+
+<img src="example.png" width="300">
+
 
 ## Usage
 Simply add `<InputAccessory>` to the bottom of a view:
