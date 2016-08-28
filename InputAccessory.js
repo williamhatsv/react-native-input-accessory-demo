@@ -1,6 +1,9 @@
 'use strict';
-
 import React, {
+   Component,
+   PropTypes,
+} from 'react';
+import ReactNative, {
   View,
   DeviceEventEmitter,
   Dimensions,
@@ -9,25 +12,27 @@ import React, {
   StyleSheet,
   Text
 } from 'react-native';
+
 const dismissKeyboard = require('dismissKeyboard');
-var INPUT_ACCESSORY_HEIGHT = 40;
+const INPUT_ACCESSORY_HEIGHT = 40;
 
-var InputAccessory = React.createClass({
-  getInitialState: function() {
-    return {
+class InputAccessory extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       visibleHeight: Dimensions.get('window').height,
-      opacity:0
+      opacity: 0
     };
-  },
+  }
 
-  //For some reason, this gives warnings?
-  componentWillMount () {
+  componentWillMount() {
+    //For some reason, this gives warnings? disable for now
+    console.disableYellowBox = true;
     DeviceEventEmitter.addListener('keyboardWillShow', this.keyboardWillShow.bind(this))
     DeviceEventEmitter.addListener('keyboardWillHide', this.keyboardWillHide.bind(this))
-  },
+  }
 
   componentWillUnmount(){
-    // console.log('componentWillUnmount');
     let newSize = Dimensions.get('window').height
     this.setState({
       visibleHeight: newSize,
@@ -35,12 +40,14 @@ var InputAccessory = React.createClass({
       opacity: 0
     })
     // dismissKeyboardHandler();
-  },
+  }
 
   keyboardWillShow (e) {
-    var newSize = e.endCoordinates.screenY - (INPUT_ACCESSORY_HEIGHT-1); //-1 so 1px is showing so it doesn't unmount
+    var newSize = e.endCoordinates.screenY - this.props.offsetY - (INPUT_ACCESSORY_HEIGHT-1);
+    // console.log('InputAccessory: keyboardWillShow: ', newSize);
+
     LayoutAnimation.configureNext({
-      duration:500,
+      duration:400,
       create: {
         type: LayoutAnimation.Types.linear,
         property: LayoutAnimation.Properties.scaleXY
@@ -50,29 +57,29 @@ var InputAccessory = React.createClass({
         property: LayoutAnimation.Properties.scaleXY
       },
     });
-    
+
     this.setState({
       visibleHeight: newSize,
       hideKA: false,
       opacity:1,
     })
-  },
+  }
 
-  rotateDevice: function() {
+  onLayout(e) {
     return false;
-  },
+  }
 
   keyboardWillHide (e) {
-    // console.log('keyboardWillHide');
+    // console.log('InputAccessory: keyboardWillHide');
     let newSize = Dimensions.get('window').height
     this.setState({
       visibleHeight: Dimensions.get('window').height,
       hideKA: true,
       opacity:0,
     })
-  },
+  }
 
-  dismissKeyboardHandler: function(){
+  dismissKeyboardHandler() {
     LayoutAnimation.configureNext({
       duration:100,
       create: {
@@ -89,13 +96,13 @@ var InputAccessory = React.createClass({
       hideKA: true,
       opacity:0,
     })
-    // console.log('dismissKeyboard',dismissKeyboard());
+    console.log('InputAccessory: dismissKeyboard');
     dismissKeyboard();
-  },
+  }
 
-  render: function(){
+  render() {
       return (
-        <View style={[s.InputAccessory,{opacity:this.state.opacity,top:this.state.visibleHeight-1}]} onLayout={(e)=>this.rotateDevice(e)}>
+        <View style={[s.InputAccessory,{opacity:this.state.opacity,top:this.state.visibleHeight-1}]} onLayout={(e)=>this.onLayout(e)}>
             <TouchableOpacity
               onPress={() => this.dismissKeyboardHandler()}>
               <Text style={[s.InputAccessoryButtonText]}>
@@ -105,26 +112,29 @@ var InputAccessory = React.createClass({
         </View>
       )
   }
-});
+}
 
+const screenHeight = Dimensions.get('window').height;
 var s = StyleSheet.create({
   InputAccessory: {
     alignItems:'flex-end',
-    backgroundColor:'#FFF',
+    backgroundColor:'#f4f4f4',
+    borderColor: '#c0c0c0',
+    borderBottomWidth: 1,
+    borderTopWidth: 1,
     height:INPUT_ACCESSORY_HEIGHT,
     position:'absolute',
-    left:0,
-    right:0,
+    top: screenHeight,
+    left: 0,
+    right: 0,
   },
   InputAccessoryButtonText: {
     fontSize: 17,
-    letterSpacing: 0.5,
-    color: '#316b6f',
+    color: '#db232e',
     backgroundColor:'transparent',
-    paddingHorizontal:9,
-    paddingVertical:9,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
 });
-
 
 module.exports = InputAccessory;
